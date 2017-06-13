@@ -1,0 +1,36 @@
+{
+  "name": "concurrent-file-store",
+  "version": "0.2.1",
+  "description": "Multi-process safe simple data store, using the filesystem for storage",
+  "main": "dist/store.js",
+  "peerDependencies": {
+
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+  },
+  "scripts": {
+    "build": "babel src -d dist",
+    "test": "npm run build",
+    "start": ""
+  },
+  "keywords": [
+
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bealearts/concurrent-file-store.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "David Beale",
+    "url": "http://bealearts.co.uk/"
+  },
+  "dependencies": {
+    "shortid": "^2.2.8"
+  }
+}
