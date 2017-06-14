@@ -23,7 +23,9 @@ export default function store(folder, options) {
         },
         
         read(id) {
+            const path = getPath(id);
             
+            return fs.readJson(path);
         },
         
         update(id) {
@@ -35,6 +37,10 @@ export default function store(folder, options) {
         },
         
         delete(id) {
+            
+        },
+        
+        list() {
             
         }
     };
