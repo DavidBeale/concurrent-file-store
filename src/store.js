@@ -37,7 +37,9 @@ export default function store(folder, options) {
         },
         
         delete(id) {
+            const path = getPath(id);
             
+            return fs.remove(path);
         },
         
         list() {
