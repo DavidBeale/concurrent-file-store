@@ -5,7 +5,8 @@ import path from 'path';
 
 const defaultOptions = {
     idField: 'id',
-    idFunction: shortid.generate
+    idFunction: shortid.generate,
+    lockTimeout: 30
 };
 
 export default function store(folder, options) {
@@ -25,7 +26,12 @@ export default function store(folder, options) {
         read(id) {
             const path = getPath(id);
             
-            return fs.readJson(path);
+            // TODO: read lock
+            return fs.readJson(path)
+                .then(obj => {
+                    // TODO: release lock
+                    return obj;
+                });
         },
         
         update(id) {
@@ -39,11 +45,22 @@ export default function store(folder, options) {
         delete(id) {
             const path = getPath(id);
             
-            return fs.remove(path);
+            // TODO: write lock
+            return fs.remove(path)
+                .then(() => {
+                    // TODO: release lock
+                });
         },
         
         list() {
-            
+            return fs.readdir(folder)
+                .then(files => files.reduce((result, file) => {
+                    const parts = path.parse(file);
+                    if (parts.ext === '.json') {
+                        result.push(parts.name);
+                    }
+                    return result;
+                }, []));
         }
     };
 }

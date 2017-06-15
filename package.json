@@ -15,7 +15,7 @@
   },
   "scripts": {
     "build": "babel src -d dist",
-    "test": "npm run build && mocha test --compilers js:babel-core/register",
+    "test": "npm run build && rm -r ./store && mocha test --compilers js:babel-core/register",
     "start": ""
   },
   "keywords": [],
@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "fs-extra": "^3.0.1",
+    "lockfile": "^1.0.3",
     "shortid": "^2.2.8"
   }
 }
