@@ -16,10 +16,12 @@ store.create({
     .then(console.info)  // Object with id field
     .catch(console.error);
 
+
 // Read an object
 store.read('fg45f-342f')
     .then(console.info) // object
     .catch(console.error);
+
 
 // Update an object
 store.update('fg45f-342f')  // write lock opened
@@ -29,10 +31,13 @@ store.update('fg45f-342f')  // write lock opened
     .then(store.save) // write lock closed
     .catch(console.error);
 
+
 // Delete an object
 store.delete('fg45f-342f')
     .catch(console.error);
+
     
+// List object ids
 store.list()
     .then(console.info)  // Array of ids
     .catch(console.error);

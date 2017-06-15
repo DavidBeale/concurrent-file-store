@@ -23,6 +23,7 @@ export default function store(folder, options) {
                 .then(() => clone);
         },
         
+        
         read(id) {
             const path = getPath(id);
             
@@ -34,13 +35,25 @@ export default function store(folder, options) {
                 });
         },
         
+        
         update(id) {
+            const path = getPath(id);
             
+            // TODO: write lock
+            return fs.readJson(path);
         },
         
+        
         save(obj) {
+            const path = getPath(obj[opts.idField]);
             
+            return fs.writeJson(path, obj, { spaces: 2 })
+                .then(() => {
+                    // TODO: release lock
+                    return obj;
+                });
         },
+        
         
         delete(id) {
             const path = getPath(id);
@@ -51,6 +64,7 @@ export default function store(folder, options) {
                     // TODO: release lock
                 });
         },
+        
         
         list() {
             return fs.readdir(folder)
