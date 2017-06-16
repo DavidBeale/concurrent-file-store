@@ -24,11 +24,11 @@ store.read('fg45f-342f')
 
 
 // Update an object
-store.update('fg45f-342f')  // write lock opened
+store.update('fg45f-342f')
     .then(obj => {
         return obj.count++;
     })
-    .then(store.save) // write lock closed
+    .then(store.save)
     .catch(console.error);
 
 
@@ -36,7 +36,7 @@ store.update('fg45f-342f')  // write lock opened
 store.delete('fg45f-342f')
     .catch(console.error);
 
-    
+
 // List object ids
 store.list()
     .then(console.info)  // Array of ids

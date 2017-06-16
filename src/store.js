@@ -12,66 +12,61 @@ const defaultOptions = {
 };
 
 
-
 export default function store(folder, options) {
     const opts = { ...defaultOptions, ...options };
-    
+
     const getPath = id => path.join(folder, `${id}.json`);
     const lock = pify((id, callback) => lockfile.lock(path.join(folder, `${id}.lock`), {}, callback));
     const unlock = pify((id, callback) => lockfile.unlock(path.join(folder, `${id}.lock`), callback));
-    
+
     return {
         create(obj) {
-            const clone = { ...obj, ...{[opts.idField]: opts.idFunction()} };
-            const path = getPath(clone[opts.idField]);
-            
-            return fs.ensureFile(path)
-                .then(() => fs.writeJson(path, clone, { spaces: 2 }))
+            const clone = { ...obj, ...{ [opts.idField]: opts.idFunction() } };
+            const objPath = getPath(clone[opts.idField]);
+
+            return fs.ensureFile(objPath)
+                .then(() => fs.writeJson(objPath, clone, { spaces: 2 }))
                 .then(() => clone);
         },
-        
-        
+
+
         read(id) {
-            const path = getPath(id);
-            
+            const objPath = getPath(id);
+
             return lock(id)
-                .then(() => fs.readJson(path))
-                .then(obj => {
-                    return unlock(id)
-                        .then(() => obj);
-                });
+                .then(() => fs.readJson(objPath))
+                .then(obj => unlock(id)
+                    .then(() => obj));
         },
-        
-        
+
+
         update(id) {
-            const path = getPath(id);
-            
+            const objPath = getPath(id);
+
             return lock(id)
-                .then(() => fs.readJson(path));
+                .then(() => fs.readJson(objPath));
         },
-        
-        
+
+
         save(obj) {
             const id = obj[opts.idField];
-            const path = getPath(id);
-            
-            return fs.writeJson(path, obj, { spaces: 2 })
-                .then(() => {
-                    return unlock(id)
-                        .then(() => obj);
-                });
+            const objPath = getPath(id);
+
+            return fs.writeJson(objPath, obj, { spaces: 2 })
+                .then(() => unlock(id)
+                    .then(() => obj));
         },
-        
-        
+
+
         delete(id) {
-            const path = getPath(id);
-            
+            const objPath = getPath(id);
+
             return lock(id)
-                .then(() => fs.remove(path))
+                .then(() => fs.remove(objPath))
                 .then(() => unlock(id));
         },
-        
-        
+
+
         list() {
             return fs.readdir(folder)
                 .then(files => files.reduce((result, file) => {
