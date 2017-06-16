@@ -1,17 +1,24 @@
 import shortid from 'shortid';
 import fs from 'fs-extra';
 import path from 'path';
-
+import pify from 'pify';
+import lockfile from 'lockfile';
 
 const defaultOptions = {
     idField: 'id',
     idFunction: shortid.generate,
-    lockTimeout: 30
+    lockTimeout: 30,
+    cacheLimit: Infinity
 };
+
+
 
 export default function store(folder, options) {
     const opts = { ...defaultOptions, ...options };
+    
     const getPath = id => path.join(folder, `${id}.json`);
+    const lock = pify((id, callback) => lockfile.lock(path.join(folder, `${id}.lock`), {}, callback));
+    const unlock = pify((id, callback) => lockfile.unlock(path.join(folder, `${id}.lock`), callback));
     
     return {
         create(obj) {
@@ -27,11 +34,11 @@ export default function store(folder, options) {
         read(id) {
             const path = getPath(id);
             
-            // TODO: read lock
-            return fs.readJson(path)
+            return lock(id)
+                .then(() => fs.readJson(path))
                 .then(obj => {
-                    // TODO: release lock
-                    return obj;
+                    return unlock(id)
+                        .then(() => obj);
                 });
         },
         
@@ -39,18 +46,19 @@ export default function store(folder, options) {
         update(id) {
             const path = getPath(id);
             
-            // TODO: write lock
-            return fs.readJson(path);
+            return lock(id)
+                .then(() => fs.readJson(path));
         },
         
         
         save(obj) {
-            const path = getPath(obj[opts.idField]);
+            const id = obj[opts.idField];
+            const path = getPath(id);
             
             return fs.writeJson(path, obj, { spaces: 2 })
                 .then(() => {
-                    // TODO: release lock
-                    return obj;
+                    return unlock(id)
+                        .then(() => obj);
                 });
         },
         
@@ -58,11 +66,9 @@ export default function store(folder, options) {
         delete(id) {
             const path = getPath(id);
             
-            // TODO: write lock
-            return fs.remove(path)
-                .then(() => {
-                    // TODO: release lock
-                });
+            return lock(id)
+                .then(() => fs.remove(path))
+                .then(() => unlock(id));
         },
         
         
