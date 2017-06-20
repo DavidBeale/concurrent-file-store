@@ -14,7 +14,7 @@ const defaultOptions = {
 
 export default function store(folder, options) {
     const opts = { ...defaultOptions, ...options };
-    const lockOpts = { wait: opts.lockTimeout };
+    const lockOpts = { wait: opts.lockTimeout, stale: opts.lockTimeout * 10 };
 
     const getPath = id => path.join(folder, `${id}.json`);
     const lock = pify((id, callback) => lockfile.lock(path.join(folder, `${id}.lock`), lockOpts, callback));
@@ -56,6 +56,13 @@ export default function store(folder, options) {
             return fs.writeJson(objPath, obj, { spaces: 2 })
                 .then(() => unlock(id)
                     .then(() => obj));
+        },
+
+
+        free(obj) {
+            const id = obj[opts.idField];
+
+            return unlock(id);
         },
 
 
