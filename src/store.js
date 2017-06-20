@@ -7,16 +7,17 @@ import lockfile from 'lockfile';
 const defaultOptions = {
     idField: 'id',
     idFunction: shortid.generate,
-    lockTimeout: 30,
+    lockTimeout: 30000,
     cacheLimit: Infinity
 };
 
 
 export default function store(folder, options) {
     const opts = { ...defaultOptions, ...options };
+    const lockOpts = { wait: opts.lockTimeout };
 
     const getPath = id => path.join(folder, `${id}.json`);
-    const lock = pify((id, callback) => lockfile.lock(path.join(folder, `${id}.lock`), {}, callback));
+    const lock = pify((id, callback) => lockfile.lock(path.join(folder, `${id}.lock`), lockOpts, callback));
     const unlock = pify((id, callback) => lockfile.unlock(path.join(folder, `${id}.lock`), callback));
 
     return {
