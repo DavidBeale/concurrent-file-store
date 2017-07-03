@@ -7,8 +7,7 @@ import lockfile from 'lockfile';
 const defaultOptions = {
     idField: 'id',
     idFunction: shortid.generate,
-    lockTimeout: 30000,
-    cacheLimit: Infinity
+    lockTimeout: 30000
 };
 
 
@@ -17,12 +16,12 @@ export default function store(folder, options) {
     const lockOpts = { wait: opts.lockTimeout, stale: opts.lockTimeout * 10 };
 
     const getPath = id => path.join(folder, `${id}.json`);
-    const lock = pify((id, callback) => lockfile.lock(path.join(folder, `${id}.lock`), lockOpts, callback));
-    const unlock = pify((id, callback) => lockfile.unlock(path.join(folder, `${id}.lock`), callback));
+    const lock = id => pify(lockfile.lock)(path.join(folder, `${id}.lock`), lockOpts);
+    const unlock = id => pify(lockfile.unlock)(path.join(folder, `${id}.lock`));
 
     return {
         create(obj) {
-            const clone = { ...obj, ...{ [opts.idField]: opts.idFunction() } };
+            const clone = { ...obj, ...{ [opts.idField]: opts.idFunction(obj) } };
             const objPath = getPath(clone[opts.idField]);
 
             return fs.ensureFile(objPath)

@@ -1,6 +1,7 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import fs from 'fs-extra';
 
 import cfs from '../';
 
@@ -13,7 +14,9 @@ describe('read', () => {
     let id;
 
     beforeEach(() => {
-        store = cfs('./store');
+        store = cfs('./store', {
+            lockTimeout: 1500
+        });
 
         return store.create({
             count: 0
@@ -38,5 +41,24 @@ describe('read', () => {
         return expect(
             result
         ).to.be.rejectedWith(Error);
+    });
+
+    it('should fail if a lock is not cleared in time', () => {
+        const result = fs.writeFile(`./store/${id}.lock`, '')
+            .then(() => store.read(id));
+
+
+        return expect(result).to.be.rejectedWith(Error);
+    });
+
+    it('Waits for a lock to clear', () => {
+        const result = fs.writeFile(`./store/${id}.lock`, '')
+            .then(() => store.read(id));
+
+        setTimeout(() => {
+            fs.remove(`./store/${id}.lock`);
+        }, 1000);
+
+        return expect(result).to.eventually.have.property('id');
     });
 });
