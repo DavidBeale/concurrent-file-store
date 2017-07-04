@@ -84,11 +84,17 @@ npm install concurrent-file-store --save
 
 * `store.save(object)` - Used with `update` to save an updated object
 
+    * `object` A JSON serialisable object to save in the store
     
+    Returns a Promise with the stored object
 
 * `store.free(id)` - Used with `update` to release a lock on an object
 
-* `store.delte(id)` - Delete an object from the store
+    * `id`  The Identity property value for the object to free
+    
+    Returns a Promise
+
+* `store.delete(id)` - Delete an object from the store
 
     * `id`  The Identity property value for the object to delete
     
