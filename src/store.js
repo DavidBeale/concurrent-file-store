@@ -81,6 +81,17 @@ export default function store(folder, options) {
                     }
                     return result;
                 }, []));
+        },
+
+
+        filter(func) {
+            return this.list()
+                .then(ids => Promise.all(
+                    ids.map(id => this.read(id)
+                        .then(obj => (func(obj) ? obj : undefined))
+                    )
+                ))
+                .then(objs => objs.filter(obj => obj));
         }
     };
 }

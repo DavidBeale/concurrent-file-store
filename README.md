@@ -44,6 +44,12 @@ store.delete('fg45f-342f')
 store.list()
     .then(console.info)  // Array of ids
     .catch(console.error);
+
+
+// Filter the store
+store.filter(obj => obj.name === 'Bob' && obj.count > 3)
+    .then(console.info)  // Array of Objects
+    .catch(console.error);
 ```
 
 # Install
@@ -60,7 +66,7 @@ npm install concurrent-file-store --save
     Options
     * `idField`: `id` Property to use for the Identity property of each stored object
     * `idFunction`: `shortid.generate` Function used to generate a unique id for each object added to the store. `function(object)`
-    * `lockTimeout`: `30000` How long (in miliseconds) an operation with wait to aquier a lock on an object. Locks are assumed to have expired after 10 * `lockTimeout`
+    * `lockTimeout`: `30000` How long (in miliseconds) an operation with wait to acquire a lock on an object. Locks are assumed to have expired after 10 * `lockTimeout`
 
     Returns a store instance (see below)
 
@@ -103,6 +109,13 @@ npm install concurrent-file-store --save
 * `store.list()` - List the Identity values of all the objects in the store
 
     Returns a Promise with an array of object Indentities
+    
+* `store.filter(func)` - Filter the store and return an array of matching objects
+
+    * `func` - Function to filter the objects by
+    
+    Returns a Promsie with an array of matching objects
+    
 
 # Test
 ```shell
