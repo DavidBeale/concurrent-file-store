@@ -58,9 +58,7 @@ export default function store(folder, options) {
         },
 
 
-        free(obj) {
-            const id = obj[opts.idField];
-
+        free(id) {
             return unlock(id);
         },
 
