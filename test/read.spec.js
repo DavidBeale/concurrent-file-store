@@ -15,7 +15,7 @@ describe('read', () => {
 
     beforeEach(() => {
         store = cfs('./store', {
-            lockTimeout: 1500
+            lockTimeout: 500
         });
 
         return store.create({
@@ -57,7 +57,7 @@ describe('read', () => {
 
         setTimeout(() => {
             fs.remove(`./store/${id}.lock`);
-        }, 1000);
+        }, 400);
 
         return expect(result).to.eventually.have.property('id');
     });

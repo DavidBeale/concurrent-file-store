@@ -13,10 +13,16 @@ const defaultOptions = {
 
 export default function store(folder, options) {
     const opts = { ...defaultOptions, ...options };
-    const lockOpts = { wait: opts.lockTimeout, stale: opts.lockTimeout * 10 };
+    const lockOpts = {
+        wait: opts.lockTimeout / 2,
+        pollPeriod: 100,
+        stale: opts.lockTimeout * 10,
+        retries: 4,
+        retryWait: opts.lockTimeout / 5
+    };
 
     const getPath = id => path.join(folder, `${id}.json`);
-    const lock = id => pify(lockfile.lock)(path.join(folder, `${id}.lock`), lockOpts);
+    const lock = id => pify(lockfile.lock)(path.join(folder, `${id}.lock`), { ...lockOpts });
     const unlock = id => pify(lockfile.unlock)(path.join(folder, `${id}.lock`));
 
     return {
