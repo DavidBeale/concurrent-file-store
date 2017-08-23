@@ -1,6 +1,6 @@
 {
   "name": "concurrent-file-store",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Multi-process safe simple data store, using the filesystem for storage",
   "main": "dist/store.js",
   "peerDependencies": {},
